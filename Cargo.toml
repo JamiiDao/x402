@@ -1,6 +1,6 @@
 [workspace]
 members = ["x402"]
-workspace.resolver = "3"
+resolver = "3"
 
 [workspace.package]
 version = "0.1.0"
@@ -10,3 +10,4 @@ license = "Apache-2.0 OR CC0-1.0"
 
 
 [workspace.dependencies]
+rusty-x402 = { path = "./x402" }
