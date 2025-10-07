@@ -1,3 +1,5 @@
+pub type X402Result<T> = Result<T, X402Error>;
+
 /// The x402 protocol defines standard error codes that may be returned by facilitators or resource servers.
 /// These error codes help clients understand why a payment failed and take appropriate action.
 pub enum X402Error {

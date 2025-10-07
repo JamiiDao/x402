@@ -1,12 +1,16 @@
-use crate::PaymentScheme;
+use std::borrow::Cow;
+
+use crate::{BorrowedStr, PaymentScheme};
 
 /// GET /supported
-pub struct SupportedBlockchains {
-    kinds: Vec<BlockchainKind>,
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
+pub struct SupportedBlockchains<'x> {
+    kinds: Cow<'x, [BlockchainKind<'x>]>,
 }
 
-pub struct BlockchainKind {
-    x402Version: u8,
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+pub struct BlockchainKind<'x> {
+    x402_version: u8,
     scheme: PaymentScheme,
-    network: String,
+    network: &'x dyn BorrowedStr,
 }

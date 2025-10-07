@@ -1,4 +1,4 @@
-use crate::Authorization;
+use crate::{Authorization, BorrowedStr};
 
 /// The "exact" scheme uses EIP-3009 (Transfer with Authorization) to enable secure,
 /// gasless transfers of specific amounts of ERC-20 tokens.
@@ -14,13 +14,23 @@ use crate::Authorization;
 ///   ],
 /// };
 /// ```
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
 pub enum PaymentScheme {
     Exact,
 }
 
-pub struct SchemePayload {
+impl PaymentScheme {
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Exact => "exact",
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+pub struct SchemePayload<'x> {
     /// EIP-712 signature for authorization
-    signature: String,
+    signature: &'x dyn BorrowedStr,
     /// EIP-3009 authorization parameters
-    authorization: Authorization,
+    authorization: Authorization<'x>,
 }
