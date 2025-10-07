@@ -10,9 +10,9 @@ pub struct PaymentRequestExtras<'x> {
 impl<'x> PaymentRequestExtras<'x> {
     pub fn to_json(&self) -> jzon::JsonValue {
         jzon::object! {
-            name: self.name.as_ref(),
-            version: self.version.as_ref(),
-            feePayer: self.fee_payer.as_ref()
+            name: self.name.as_str(),
+            version: self.version.as_str(),
+            feePayer: self.fee_payer.as_str()
         }
     }
 }
