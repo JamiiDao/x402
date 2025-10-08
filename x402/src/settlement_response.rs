@@ -1,15 +1,19 @@
-use crate::BorrowedStr;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Serialize, Deserialize)]
 pub struct SettlementResponse<'x> {
     /// Indicates whether the payment settlement was successful
     success: bool,
     /// Error reason if settlement failed (omitted if successful)
-    error_reason: Option<&'x dyn BorrowedStr>,
+    #[serde(borrow)]
+    error_reason: Option<&'x str>,
     /// Blockchain transaction hash (empty string if settlement failed)
-    transaction: Option<&'x dyn BorrowedStr>,
+    #[serde(borrow)]
+    transaction: Option<&'x str>,
     /// Blockchain network identifier
-    network: &'x dyn BorrowedStr,
+    #[serde(borrow)]
+    network: &'x str,
     /// Address of the payer's wallet
-    payer: &'x dyn BorrowedStr,
+    #[serde(borrow)]
+    payer: &'x str,
 }

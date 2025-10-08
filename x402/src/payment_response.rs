@@ -1,14 +1,18 @@
+use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
 use crate::{PaymentRequirements, X402Version};
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PaymentRequirementsResponse<'x> {
     /// Protocol version identifier
     x402_version: X402Version,
     /// Human-readable error message explaining why payment is required
-    error: &'static str,
+    #[serde(borrow)]
+    error: &'x str,
     /// Array of payment requirement objects defining acceptable payment methods
+    #[serde(borrow)]
     accepts: Cow<'x, [PaymentRequirements<'x>]>,
 }
 
@@ -23,6 +27,10 @@ impl<'x> PaymentRequirementsResponse<'x> {
         self.accepts.to_mut().push(value);
 
         self
+    }
+
+    pub fn to_json(&self) -> Result<String, serde_json::Error> {
+        serde_json::to_string(self)
     }
 }
 

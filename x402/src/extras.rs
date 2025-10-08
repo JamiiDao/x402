@@ -1,18 +1,45 @@
-use crate::BorrowedStr;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PaymentRequestExtras<'x> {
-    name: &'x dyn BorrowedStr,
-    version: &'x dyn BorrowedStr,
-    fee_payer: &'x dyn BorrowedStr,
+    #[serde(borrow)]
+    name: Option<&'x str>,
+    #[serde(borrow)]
+    version: Option<&'x str>,
+    #[serde(borrow)]
+    fee_payer: &'x str,
 }
 
 impl<'x> PaymentRequestExtras<'x> {
-    pub fn to_json(&self) -> jzon::JsonValue {
-        jzon::object! {
-            name: self.name.as_str(),
-            version: self.version.as_str(),
-            feePayer: self.fee_payer.as_str()
+    pub fn new(fee_payer: &'x str) -> Self {
+        Self {
+            fee_payer,
+            ..Default::default()
         }
+    }
+
+    pub fn set_name(&mut self, name: &'x str) -> &mut Self {
+        self.name.replace(name);
+
+        self
+    }
+
+    pub fn set_version(&mut self, version: &'x str) -> &mut Self {
+        self.version.replace(version);
+
+        self
+    }
+
+    pub fn fee_payer(&self) -> &str {
+        self.fee_payer
+    }
+
+    pub fn name(&self) -> Option<&str> {
+        self.name
+    }
+
+    pub fn version(&self) -> Option<&str> {
+        self.version
     }
 }

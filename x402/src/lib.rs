@@ -36,6 +36,3 @@ pub use discovery::*;
 
 mod blockchain_info;
 pub use blockchain_info::*;
-
-mod utils;
-pub use utils::*;

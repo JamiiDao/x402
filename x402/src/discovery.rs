@@ -1,11 +1,14 @@
 use std::borrow::Cow;
 
-use crate::{BorrowedStr, ResourceInfo};
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+use crate::ResourceInfo;
+
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Serialize, Deserialize)]
 pub struct DiscoveryRequest<'x> {
     /// Filter by resource type (e.g., "http")
-    r#type: &'x dyn BorrowedStr,
+    #[serde(borrow)]
+    r#type: &'x str,
     /// Maximum number of results to return (1-100); defaults to `20`
     limit: u64,
     /// Number of results to skip for pagination; defaults to `0`
@@ -19,14 +22,15 @@ pub struct DiscoveryRequest<'x> {
 ///
 /// ### Search for specific provider
 /// GET /discovery/resources?metadata[provider]=Coinbase
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Serialize, Deserialize)]
 pub struct DiscoveryPayload<'x> {
     x402_version: u8,
+    #[serde(borrow)]
     items: Cow<'x, [ResourceInfo<'x>]>,
     pagination: PayloadPagination,
 }
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Copy, Serialize, Deserialize)]
 pub struct PayloadPagination {
     limit: u64,
     offset: u64,

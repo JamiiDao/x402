@@ -2,39 +2,81 @@ pub type X402Result<T> = Result<T, X402Error>;
 
 /// The x402 protocol defines standard error codes that may be returned by facilitators or resource servers.
 /// These error codes help clients understand why a payment failed and take appropriate action.
+#[derive(Debug, PartialEq, Eq, thiserror::Error)]
 pub enum X402Error {
+    #[error("The mime type is not supported. Only JSON and Binary")]
     UnsupportedX402MimeType,
     ///  `insufficient_funds` error. Client does not have enough tokens to complete the payment
+    #[error("The client does not have sufficient tokens to complete the transaction")]
     InsufficientFunds,
     /// `invalid_exact_evm_payload_authorization_valid_after` error. Payment authorization is not yet valid (before validAfter timestamp)
+    #[error("Invalid `ValidAfter`")]
     InvalidExactSvmPayloadAuthorizationValidAfter,
     /// `invalid_exact_evm_payload_authorization_valid_before` error. Payment authorization has expired (after validBefore timestamp)
+    #[error("Invalid `ValidBefore` value")]
     InvalidExactSvmPayloadAuthorizationValidBefore,
     /// `invalid_exact_evm_payload_authorization_value` error. Payment amount is insufficient for the required payment
+    #[error("Invalid autorization value")]
     InvalidExactSvmPayloadAuthorizationValue,
     /// `invalid_exact_evm_payload_signature` error. Payment authorization signature is invalid or improperly signed
+    #[error("Invalid payload signature")]
     InvalidExactSvmPayloadSignature,
     ///  `invalid_exact_evm_payload_recipient_mismatch` error. Recipient address does not match payment requirements
+    #[error("Recipient mismatch")]
     InvalidExactSvmPayloadRecipientMismatch,
     /// `invalid_network` error. Specified blockchain network is not supported
+    #[error("Invalid blockchain network")]
     InvalidNetwork,
     /// `invalid_payload` error. Payment payload is malformed or contains invalid data
+    #[error("Invalid payload")]
     InvalidPayload,
     /// `invalid_payment_requirements` error. Payment requirements object is invalid or malformed
+    #[error("Invalid payment requirements")]
     InvalidPaymentRequirements,
     /// `invalid_scheme` error. Specified payment scheme is not supported
+    #[error("Invalid x402 scheme")]
     InvalidScheme,
     /// `unsupported_scheme` error. Payment scheme is not supported by the facilitator
+    #[error("The x402 scheme is not supported")]
     UnsupportedScheme,
     /// `invalid_x402_version` error. Protocol version is not supported
+    #[error("Invalid x402 version")]
     InvalidX402Version,
     /// `invalid_transaction_state` error. Blockchain transaction failed or was rejected
+    #[error("Invalid transaction state")]
     InvalidTransactionState,
     /// `unexpected_verify_error` error. Unexpected error occurred during payment verification
+    #[error("Payment verification error")]
     UnexpectedVerifyError,
     /// `unexpected_settle_error`: Unexpected error occurred during payment settlement
+    #[error("`unexpected_settle_error`: Unexpected error occurred during payment settlement")]
     UnexpectedSettleError,
+    #[error("Unsupported error")]
     UnsupportedX402Error,
+    #[error("The maximum amount required is missing. Unable to build the payment requirements.")]
+    MaxAmountIsMissing,
+    #[error(
+        "The asset required for the transaction is missing. Unable to build the payment requirements."
+    )]
+    AssetIsMissing,
+    #[error("The recipient of the asset is missing. Unable to build the payment requirements.")]
+    PayToIsMissing,
+    #[error(
+        "The resource that requires payment is not set. Unable to build the payment requirements."
+    )]
+    ResourceIsMissing,
+    #[error("A description of the resource is missing. Unable to build the payment requirements.")]
+    DescriptionIsMissing,
+    #[error("The mime type for the payload is missing. Unable to build the payment requirements.")]
+    MimeTypeMissing,
+    #[error(
+        "The expiry of the transaction request is missing. Unable to build the payment requirements."
+    )]
+    MaxTimeoutIsMissing,
+    #[error(
+        "The extra field is missing. At least the feePayer field is required. Unable to build the payment requirements."
+    )]
+    ExtraIsMissing,
 }
 
 impl TryFrom<&str> for X402Error {
