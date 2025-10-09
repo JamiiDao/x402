@@ -45,6 +45,63 @@ pub struct PaymentRequirements<'x> {
     extra: PaymentRequestExtras<'x>,
 }
 
+impl<'x> PaymentRequirements<'x> {
+    /// Payment scheme identifier (e.g., "exact")
+    pub fn scheme(&self) -> PaymentScheme {
+        self.scheme
+    }
+
+    /// Blockchain network identifier (e.g., "solana", "solana-devnet")
+    pub fn network(&self) -> X402SolanaNetworkInfo {
+        self.network
+    }
+
+    /// Required payment amount in atomic token units
+    pub fn max_amount_required(&self) -> u64 {
+        self.max_amount_required
+    }
+
+    /// Token contract address
+    pub fn asset(&self) -> &str {
+        self.asset
+    }
+
+    /// Recipient wallet address for the payment
+    pub fn pay_to(&self) -> &str {
+        self.pay_to
+    }
+
+    /// URL of the protected resource
+    pub fn resource(&self) -> &str {
+        self.resource
+    }
+
+    /// Human-readable description of the resource
+    pub fn description(&self) -> &str {
+        self.description
+    }
+
+    /// MIME type of the expected response
+    pub fn mime_type(&self) -> Option<MimeType> {
+        self.mime_type
+    }
+
+    /// Optional JSON schema describing the response format
+    pub fn output_schema(&self) -> Option<&Cow<'_, str>> {
+        self.output_schema.as_ref()
+    }
+
+    /// Maximum time allowed for payment completion
+    pub fn max_timeout_seconds(&self) -> u64 {
+        self.max_timeout_seconds
+    }
+
+    /// Scheme-specific additional information
+    pub fn extra(&self) -> PaymentRequestExtras<'_> {
+        self.extra
+    }
+}
+
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone)]
 pub struct PaymentRequirementsBuilder<'x> {
     /// Payment scheme identifier (e.g., "exact")

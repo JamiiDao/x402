@@ -32,6 +32,18 @@ impl<'x> PaymentRequirementsResponse<'x> {
     pub fn to_json(&self) -> Result<String, serde_json::Error> {
         serde_json::to_string(self)
     }
+
+    pub fn x402_version(&self) -> X402Version {
+        self.x402_version
+    }
+
+    pub fn error(&self) -> &str {
+        self.error
+    }
+
+    pub fn accepts(&self) -> &[PaymentRequirements<'_>] {
+        self.accepts.as_ref()
+    }
 }
 
 impl<'x> Default for PaymentRequirementsResponse<'x> {
