@@ -54,6 +54,12 @@ impl<'x> PaymentRequestExtras<'x> {
         self
     }
 
+    pub fn set_decimals(mut self, decimals: u8) -> Self {
+        self.decimals = decimals;
+
+        self
+    }
+
     pub fn fee_payer(&self) -> &str {
         self.fee_payer
     }

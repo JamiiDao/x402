@@ -10,17 +10,17 @@ pub use payment_requirements::*;
 mod extras;
 pub use extras::*;
 
-mod payment_scheme;
-pub use payment_scheme::*;
+mod scheme;
+pub use scheme::*;
 
-mod payment_mime;
-pub use payment_mime::*;
+mod mime;
+pub use mime::*;
 
 mod errors;
 pub use errors::*;
 
-mod payment_payload;
-pub use payment_payload::*;
+mod payload;
+pub use payload::*;
 
 mod authorization;
 pub use authorization::*;
@@ -28,8 +28,8 @@ pub use authorization::*;
 mod settlement_response;
 pub use settlement_response::*;
 
-mod payment_resource;
-pub use payment_resource::*;
+mod resource;
+pub use resource::*;
 
 mod discovery;
 pub use discovery::*;
