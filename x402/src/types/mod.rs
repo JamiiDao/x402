@@ -36,3 +36,6 @@ pub use discovery::*;
 
 mod blockchain_info;
 pub use blockchain_info::*;
+
+mod x_payment_header;
+pub use x_payment_header::*;

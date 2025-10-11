@@ -2,9 +2,12 @@ use serde::{Deserialize, Serialize};
 
 use crate::X402Error;
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Copy, Serialize, Deserialize)]
+#[derive(
+    Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Copy, Default, Serialize, Deserialize,
+)]
 #[non_exhaustive]
 pub enum X402Version {
+    #[default]
     V1 = 1,
 }
 

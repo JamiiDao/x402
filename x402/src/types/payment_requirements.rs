@@ -331,14 +331,17 @@ impl TryFrom<&str> for X402SolanaNetworkInfo {
     }
 }
 
-fn serialize_network<S>(network: &X402SolanaNetworkInfo, serializer: S) -> Result<S::Ok, S::Error>
+pub fn serialize_network<S>(
+    network: &X402SolanaNetworkInfo,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
 {
     serializer.serialize_str(network.x402_identifier())
 }
 
-fn deserialize_network<'de, D>(deserializer: D) -> Result<X402SolanaNetworkInfo, D::Error>
+pub fn deserialize_network<'de, D>(deserializer: D) -> Result<X402SolanaNetworkInfo, D::Error>
 where
     D: Deserializer<'de>,
 {
