@@ -11,3 +11,23 @@ license = "Apache-2.0 OR CC0-1.0"
 
 [workspace.dependencies]
 rusty-x402 = { path = "./x402" }
+
+jzon = "0.12.5"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
+thiserror = "2.0.17"
+bincode = "1"
+bs58 = "0.5.1"
+solana-instruction = "2"
+solana-keypair = "=2"
+solana-pubkey = "=2"
+solana-sdk-ids = "=2"
+solana-signer = "=2"
+solana-system-interface = { version = "=1", features = ["bincode"] }
+solana-transaction = "=2"
+spl-associated-token-account = "7"
+spl-token = "8.0.0"
+spl-token-2022 = { version = "9.0.0" }
+base64ct = { version = "1.8.0", features = ["std"] }
+solana-message = { version = "2", features = ["bincode"] }
+solana-hash = "2"
