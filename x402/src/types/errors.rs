@@ -1,3 +1,5 @@
+use serde::{Deserialize, Deserializer, Serializer};
+
 pub type X402Result<T> = Result<T, X402Error>;
 
 /// The x402 protocol defines standard error codes that may be returned by facilitators or resource servers.
@@ -77,6 +79,8 @@ pub enum X402Error {
         "The extra field is missing. At least the feePayer field is required. Unable to build the payment requirements."
     )]
     ExtraIsMissing,
+    #[error("The status code received after the `settle` API was called is invalid")]
+    UnsupportedX402StatusCodeError,
 }
 
 impl TryFrom<&str> for X402Error {
@@ -112,4 +116,84 @@ impl TryFrom<&str> for X402Error {
 
         Ok(outcome)
     }
+}
+
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Default)]
+pub enum X402PaymentErrorStatusCode {
+    /// Payment needed to access resource
+    #[default]
+    PaymentRequired,
+    /// Malformed payment payload or requirements
+    InvalidPayment,
+    /// Payment verification or settlement failed
+    PaymentFailed,
+    /// Internal server error during payment processing
+    ServerError,
+}
+
+impl X402PaymentErrorStatusCode {
+    pub fn status_code(&self) -> u16 {
+        match self {
+            Self::PaymentRequired => 402,
+            Self::InvalidPayment => 400,
+            Self::PaymentFailed => 402,
+            Self::ServerError => 500,
+        }
+    }
+
+    pub fn description(&self) -> &str {
+        match self {
+            Self::PaymentRequired => "Payment Required",
+            Self::InvalidPayment => "Invalid Payment",
+            Self::PaymentFailed => "Payment Failed",
+            Self::ServerError => "Server Error",
+        }
+    }
+
+    pub fn info(&self) -> &str {
+        match self {
+            Self::PaymentRequired => "Payment needed to access resource",
+            Self::InvalidPayment => "Malformed payment payload or requirements",
+            Self::PaymentFailed => "Payment verification or settlement failed",
+            Self::ServerError => "Internal server error during payment processing",
+        }
+    }
+}
+
+impl TryFrom<&str> for X402PaymentErrorStatusCode {
+    type Error = X402Error;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        let error_status = match value {
+            m if m.contains(Self::PaymentRequired.description()) => Self::PaymentRequired,
+            m if m.contains(Self::InvalidPayment.description()) => Self::InvalidPayment,
+            m if m.contains(Self::PaymentFailed.description()) => Self::PaymentFailed,
+            m if m.contains(Self::ServerError.description()) => Self::ServerError,
+            _ => return Err(X402Error::UnsupportedX402StatusCodeError),
+        };
+
+        Ok(error_status)
+    }
+}
+
+pub fn serialize_error_status_code<S>(
+    error_status_code: &X402PaymentErrorStatusCode,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    serializer.serialize_u16(error_status_code.status_code())
+}
+
+pub fn deserialize_error_status_code<'de, D>(
+    deserializer: D,
+) -> Result<X402PaymentErrorStatusCode, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    String::deserialize(deserializer)?
+        .as_str()
+        .try_into()
+        .map_err(serde::de::Error::custom)
 }

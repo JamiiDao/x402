@@ -1,12 +1,14 @@
 use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
-use crate::{PaymentRequirements, X402Version};
+use crate::{PaymentRequirements, X402Version, deserialize_x402_version, serialize_x402_version};
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PaymentRequirementsResponse<'x> {
     /// Protocol version identifier
+    #[serde(deserialize_with = "deserialize_x402_version")]
+    #[serde(serialize_with = "serialize_x402_version")]
     x402_version: X402Version,
     /// Human-readable error message explaining why payment is required
     #[serde(borrow)]
@@ -23,6 +25,18 @@ impl<'x> PaymentRequirementsResponse<'x> {
         Self::default()
     }
 
+    pub fn set_error_reason(&mut self, error_reason: &'x str) -> &mut Self {
+        self.error = error_reason;
+
+        self
+    }
+
+    pub fn set_version(&mut self, x402_version: X402Version) -> &mut Self {
+        self.x402_version = x402_version;
+
+        self
+    }
+
     pub fn add_payment_requirement(&mut self, value: PaymentRequirements<'x>) -> &mut Self {
         self.accepts.to_mut().push(value);
 
@@ -37,7 +51,7 @@ impl<'x> PaymentRequirementsResponse<'x> {
         self.x402_version
     }
 
-    pub fn error(&self) -> &str {
+    pub fn error_reason(&self) -> &str {
         self.error
     }
 

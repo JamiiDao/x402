@@ -1,14 +1,16 @@
+use std::borrow::Cow;
+
 use serde::{Deserialize, Serialize};
 
-use crate::{X402SolanaNetworkInfo, deserialize_network, serialize_network};
+use crate::{
+    PaymentRequirements, PaymentRequirementsResponse, X402PaymentErrorStatusCode,
+    X402SolanaNetworkInfo, X402Version, deserialize_network, serialize_network,
+};
 
-#[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Serialize, Deserialize)]
-pub struct SettlementResponse<'x> {
+#[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord, Clone, Serialize, Deserialize)]
+pub struct SettlementResponse<'x, T: Clone> {
     /// Indicates whether the payment settlement was successful
     success: bool,
-    /// Error reason if settlement failed (omitted if successful)
-    #[serde(borrow)]
-    error_reason: Option<&'x str>,
     /// Blockchain transaction hash (empty string if settlement failed)
     #[serde(borrow)]
     transaction: Option<&'x str>,
@@ -19,9 +21,14 @@ pub struct SettlementResponse<'x> {
     /// Address of the payer's wallet
     #[serde(borrow)]
     payer: &'x str,
+    data: T,
+    timestamp: &'x str, // Example "2024-01-15T10:30:00Z"
 }
 
-impl<'x> SettlementResponse<'x> {
+impl<'x, T> SettlementResponse<'x, T>
+where
+    T: Serialize + Deserialize<'x> + Clone + Default,
+{
     pub fn new(success: bool) -> Self {
         Self {
             success,
@@ -29,14 +36,21 @@ impl<'x> SettlementResponse<'x> {
         }
     }
 
-    pub fn set_error_reason(&mut self, error: &'x str) -> &mut Self {
-        self.error_reason.replace(error);
+    pub fn set_transaction_signature(&mut self, transaction_signature: &'x str) -> &mut Self {
+        self.transaction.replace(transaction_signature);
 
         self
     }
 
-    pub fn set_transaction_signature(&mut self, transaction_signature: &'x str) -> &mut Self {
-        self.transaction.replace(transaction_signature);
+    pub fn set_data(&mut self, data: T) -> &mut Self {
+        self.data = data;
+
+        self
+    }
+
+    // TODO use rust time formats
+    pub fn set_timestamp(&mut self, timestamp: &'x str) -> &mut Self {
+        self.timestamp = timestamp;
 
         self
     }
@@ -76,11 +90,6 @@ impl<'x> SettlementResponse<'x> {
         self.success
     }
 
-    /// Error reason if settlement failed (omitted if successful)
-    pub fn error_reason(&self) -> Option<&str> {
-        self.error_reason
-    }
-
     /// Blockchain transaction hash (empty string if settlement failed)
     pub fn transaction(&self) -> Option<&str> {
         self.transaction
@@ -94,5 +103,75 @@ impl<'x> SettlementResponse<'x> {
     /// Address of the payer's wallet
     pub fn payer(&self) -> &str {
         self.payer
+    }
+    pub fn timestamp(&self) -> &str {
+        self.timestamp
+    }
+
+    pub fn data(&self) -> &T {
+        &self.data
+    }
+}
+
+#[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord, Clone)]
+pub struct SettlementResponseError<'x> {
+    payload: PaymentRequirementsResponse<'x>,
+    status_code: X402PaymentErrorStatusCode,
+}
+
+impl<'x> SettlementResponseError<'x> {
+    pub fn new(payment_requirements: PaymentRequirementsResponse<'x>) -> Self {
+        Self {
+            payload: payment_requirements,
+            status_code: X402PaymentErrorStatusCode::PaymentRequired,
+        }
+    }
+
+    pub fn inner(&'x self) -> &'x PaymentRequirementsResponse<'x> {
+        &self.payload
+    }
+
+    pub fn take(self) -> PaymentRequirementsResponse<'x> {
+        self.payload
+    }
+
+    pub fn set_error_reason(mut self, error: &'x str) -> Self {
+        self.payload.set_error_reason(error);
+
+        self
+    }
+
+    pub fn set_status_code(mut self, status_code: X402PaymentErrorStatusCode) -> Self {
+        self.status_code = status_code;
+
+        self
+    }
+
+    pub fn x402_version(&self) -> X402Version {
+        self.payload.x402_version()
+    }
+
+    pub fn accepts(&self) -> &[PaymentRequirements<'_>] {
+        self.payload.accepts()
+    }
+
+    pub fn status_code(&self) -> u16 {
+        self.status_code.status_code()
+    }
+
+    pub fn status_code_description(&self) -> &str {
+        self.status_code.description()
+    }
+
+    pub fn error_header(&'x self) -> Cow<'x, str> {
+        Cow::Borrowed("")
+            + Cow::Owned(self.status_code().to_string())
+            + " "
+            + self.status_code_description()
+    }
+
+    /// Error reason if settlement failed (omitted if successful)
+    pub fn error_reason(&self) -> &str {
+        self.payload.error_reason()
     }
 }

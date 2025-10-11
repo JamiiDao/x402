@@ -4,25 +4,28 @@ use base64ct::{Base64, Encoding};
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    PaymentScheme, X402SolanaNetworkInfo, X402Version, deserialize_network, serialize_network,
+    PaymentScheme, X402SolanaNetworkInfo, X402Version, deserialize_network,
+    deserialize_x402_version, serialize_network, serialize_x402_version,
 };
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
-pub struct XPaymentHeader<'x> {
+pub struct XPaymentPayload<'x> {
+    #[serde(deserialize_with = "deserialize_x402_version")]
+    #[serde(serialize_with = "serialize_x402_version")]
     x402_version: X402Version,
     scheme: PaymentScheme,
     #[serde(deserialize_with = "deserialize_network")]
     #[serde(serialize_with = "serialize_network")]
     network: X402SolanaNetworkInfo,
     #[serde(borrow)]
-    payload: XPaymentPayload<'x>,
+    payload: XPaymentTransaction<'x>,
 }
 
-impl<'x> XPaymentHeader<'x> {
+impl<'x> XPaymentPayload<'x> {
     pub fn new(transaction: impl AsRef<[u8]>) -> Self {
         let payload = Base64::encode_string(transaction.as_ref());
-        let payload = XPaymentPayload {
+        let payload = XPaymentTransaction {
             transaction: payload.into(),
         };
 
@@ -74,21 +77,21 @@ impl<'x> XPaymentHeader<'x> {
         self.scheme
     }
 
-    pub fn payload(&'x self) -> &'x XPaymentPayload<'x> {
+    pub fn transaction(&'x self) -> &'x XPaymentTransaction<'x> {
         &self.payload
     }
 
-    pub fn payload_transaction(&self) -> &str {
+    pub fn transaction_signature(&self) -> &str {
         self.payload.transaction.as_ref()
     }
 }
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Deserialize, Serialize, Clone, Default)]
-pub struct XPaymentPayload<'x> {
+pub struct XPaymentTransaction<'x> {
     transaction: Cow<'x, str>,
 }
 
-impl<'x> XPaymentPayload<'x> {
+impl<'x> XPaymentTransaction<'x> {
     pub fn transaction(&self) -> &str {
         self.transaction.as_ref()
     }

@@ -19,17 +19,8 @@ pub use mime::*;
 mod errors;
 pub use errors::*;
 
-mod payload;
-pub use payload::*;
-
-mod authorization;
-pub use authorization::*;
-
 mod settlement_response;
 pub use settlement_response::*;
-
-mod resource;
-pub use resource::*;
 
 mod discovery;
 pub use discovery::*;
@@ -42,3 +33,9 @@ pub use x_payment_header::*;
 
 mod headers_constants;
 pub use headers_constants::*;
+
+mod verify;
+pub use verify::*;
+
+mod supported;
+pub use supported::*;
