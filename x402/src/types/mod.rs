@@ -39,3 +39,6 @@ pub use blockchain_info::*;
 
 mod x_payment_header;
 pub use x_payment_header::*;
+
+mod headers_constants;
+pub use headers_constants::*;

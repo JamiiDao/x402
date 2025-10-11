@@ -1,0 +1,2 @@
+pub const X_PAYMENT_HEADER_KEY: &str = "X-PAYMENT";
+pub const X_PAYMENT_RESPONSE_HEADER_KEY: &str = "X-PAYMENT-RESPONSE";
