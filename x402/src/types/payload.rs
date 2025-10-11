@@ -10,7 +10,7 @@ pub struct PaymentPayload<'x> {
     x402_version: u8,
     /// Payment scheme identifier (e.g., "exact")
     scheme: PaymentScheme,
-    /// Blockchain network identifier (e.g., "base-sepolia", "ethereum-mainnet")
+    /// Blockchain network identifier (solana-devnet, solana-mainnet, solana-testnet, solana-localnet)
     #[serde(deserialize_with = "deserialize_network")]
     #[serde(serialize_with = "serialize_network")]
     network: X402SolanaNetworkInfo,
