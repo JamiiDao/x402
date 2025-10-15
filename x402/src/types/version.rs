@@ -33,10 +33,7 @@ pub fn deserialize_x402_version<'de, D>(deserializer: D) -> Result<X402Version, 
 where
     D: Deserializer<'de>,
 {
-    let s = String::deserialize(deserializer)?;
-
-    s.as_str()
-        .parse::<u8>()
+    u8::deserialize(deserializer)
         .map_err(serde::de::Error::custom)?
         .try_into()
         .map_err(serde::de::Error::custom)
