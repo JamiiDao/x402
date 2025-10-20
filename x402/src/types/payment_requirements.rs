@@ -8,7 +8,7 @@ use crate::{
     serialize_mime,
 };
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PaymentRequirements<'x> {
     /// Payment scheme identifier (e.g., "exact")

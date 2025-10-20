@@ -2,8 +2,9 @@ use serde::{Deserialize, Deserializer, Serializer};
 
 use crate::X402Error;
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash)]
+#[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Hash)]
 pub enum MimeType {
+    #[default]
     Json,
     Binary,
 }

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{PaymentRequirements, XPaymentPayload};
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct VerifyPayload<'x> {
     #[serde(borrow)]
@@ -13,7 +13,7 @@ pub struct VerifyPayload<'x> {
     pub payment_requirements: PaymentRequirements<'x>,
 }
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct VerifyPayloadResponse<'x> {
     pub is_valid: bool,

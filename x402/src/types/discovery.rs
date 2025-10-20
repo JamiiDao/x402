@@ -18,7 +18,7 @@ pub struct ResourceInfo<'x> {
     #[serde(borrow)]
     pub accepts: Cow<'x, [PaymentRequirements<'x>]>,
     /// Unix timestamp of when the resource was last updated
-    last_updated: u64,
+    pub last_updated: u64,
     /// Additional metadata (category, provider, etc.)
     #[serde(borrow)]
     pub metadata: Option<ResourceInfoMetadata<'x>>,
@@ -30,14 +30,14 @@ pub struct ResourceInfo<'x> {
     pub description: Option<Cow<'x, str>>,
 }
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Deserialize, Serialize)]
+#[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Deserialize, Serialize)]
 pub struct ResourceInfoMetadata<'x> {
     #[serde(borrow)]
     pub category: &'x str,
     #[serde(borrow)]
     pub provider: &'x str,
 }
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Serialize, Deserialize)]
 pub struct DiscoveryRequest<'x> {
     /// Filter by resource type (e.g., "http")
     #[serde(borrow)]
@@ -55,7 +55,7 @@ pub struct DiscoveryRequest<'x> {
 ///
 /// ### Search for specific provider
 /// GET /discovery/resources?metadata[provider]=Coinbase
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord, Clone, Serialize, Deserialize)]
 pub struct DiscoveryPayload<'x> {
     pub x402_version: u8,
     #[serde(borrow)]
@@ -63,9 +63,11 @@ pub struct DiscoveryPayload<'x> {
     pub pagination: PayloadPagination,
 }
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Copy, Serialize, Deserialize)]
+#[derive(
+    Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Copy, Serialize, Deserialize,
+)]
 pub struct PayloadPagination {
-    pub limit: u64,
+    pub limit: Option<u64>,
     pub offset: u64,
-    pub total: u64,
+    pub total: Option<u64>,
 }
