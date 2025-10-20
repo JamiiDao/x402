@@ -22,6 +22,12 @@ pub struct ResourceInfo<'x> {
     /// Additional metadata (category, provider, etc.)
     #[serde(borrow)]
     pub metadata: Option<ResourceInfoMetadata<'x>>,
+    #[serde(borrow)]
+    pub header_image: Option<Cow<'x, str>>,
+    #[serde(borrow)]
+    pub title: Option<Cow<'x, str>>,
+    #[serde(borrow)]
+    pub description: Option<Cow<'x, str>>,
 }
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Deserialize, Serialize)]
