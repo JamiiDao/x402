@@ -97,7 +97,12 @@ impl<'x> PaymentRequirements<'x> {
     }
 
     /// Scheme-specific additional information
-    pub fn extra(&self) -> PaymentRequestExtras<'_> {
+    pub fn extra(&self) -> &PaymentRequestExtras<'_> {
+        &self.extra
+    }
+
+    /// Scheme-specific additional information but consumes self
+    pub fn extra_take(self) -> PaymentRequestExtras<'x> {
         self.extra
     }
 }

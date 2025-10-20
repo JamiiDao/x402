@@ -1,6 +1,8 @@
+use std::borrow::Cow;
+
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Default, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PaymentRequestExtras<'x> {
     #[serde(borrow)]
@@ -13,6 +15,10 @@ pub struct PaymentRequestExtras<'x> {
     decimals: u8,
     #[serde(borrow)]
     authority: Option<&'x str>,
+    #[serde(borrow)]
+    pub header_image: Option<Cow<'x, str>>,
+    #[serde(borrow)]
+    pub title: Option<Cow<'x, str>>,
 }
 
 impl<'x> PaymentRequestExtras<'x> {
@@ -60,6 +66,18 @@ impl<'x> PaymentRequestExtras<'x> {
         self
     }
 
+    pub fn set_title(mut self, title: &'x str) -> Self {
+        self.title.replace(title.into());
+
+        self
+    }
+
+    pub fn set_header_image(mut self, image_url: &'x str) -> Self {
+        self.header_image.replace(image_url.into());
+
+        self
+    }
+
     pub fn fee_payer(&self) -> &str {
         self.fee_payer
     }
@@ -82,5 +100,13 @@ impl<'x> PaymentRequestExtras<'x> {
 
     pub fn authority(&self) -> Option<&str> {
         self.authority
+    }
+
+    pub fn title(&self) -> Option<&Cow<'_, str>> {
+        self.title.as_ref()
+    }
+
+    pub fn header_image(&self) -> Option<&Cow<'_, str>> {
+        self.header_image.as_ref()
     }
 }
