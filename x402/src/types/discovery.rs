@@ -11,7 +11,7 @@ pub struct ResourceInfo<'x> {
     pub resource: &'x str,
     /// Resource type (currently "http" for HTTP endpoints)
     #[serde(borrow)]
-    r#type: Option<&'x str>,
+    pub r#type: Option<&'x str>,
     /// Protocol version supported by the resource
     pub x402_version: u8,
     /// Array of PaymentRequirements objects specifying payment methods
