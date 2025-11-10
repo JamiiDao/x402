@@ -31,11 +31,15 @@ pub struct ResourceInfo<'x> {
 }
 
 #[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ResourceInfoMetadata<'x> {
     #[serde(borrow)]
     pub category: &'x str,
     #[serde(borrow)]
     pub provider: &'x str,
+    #[serde(borrow)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub agent_card: Option<&'x str>,
 }
 #[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Serialize, Deserialize)]
 pub struct DiscoveryRequest<'x> {
